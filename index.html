@@ -436,6 +436,61 @@ function addItem(){
   updateProgress();
 }
 
+// ---------- SAVE CHECKLIST ----------
+
+function saveChecklist(){
+  const items=[];
+
+  document.querySelectorAll(".item").forEach(item=>{
+    items.push({
+      name:item.querySelector(".itemText").textContent,
+      icon:item.querySelector(".itemIcon").textContent,
+      checked:item.classList.contains("checked")
+    });
+  });
+
+  localStorage.setItem("dontForgetChecklist",JSON.stringify(items));
+}
+
+// ---------- LOAD CHECKLIST ----------
+
+function loadChecklist(){
+  const saved=localStorage.getItem("dontForgetChecklist");
+
+  if(!saved)return;
+
+  const items=JSON.parse(saved);
+
+  document.getElementById("checklist").innerHTML="";
+
+  items.forEach(data=>{
+    const item=document.createElement("div");
+    item.className="item";
+
+    if(data.checked){
+      item.classList.add("checked");
+    }
+
+    item.innerHTML=`
+      <div class="check"></div>
+      <div class="itemText"></div>
+      <div class="itemIcon"></div>
+    `;
+
+    item.querySelector(".itemText").textContent=data.name;
+    item.querySelector(".itemIcon").textContent=data.icon;
+
+    document.getElementById("checklist").appendChild(item);
+  });
+}
+
+// ---------- AUTO SAVE ----------
+
+document.getElementById("checklist").addEventListener("click",function(){
+  saveChecklist();
+});
+
+loadChecklist();
 updateProgress();
 </script>
 
