@@ -261,6 +261,21 @@ body{
     font-size:24px;
   }
 }
+  .deleteBtn{
+  border:none;
+  background:#fff0f0;
+  color:#e53935;
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  font-size:16px;
+  cursor:pointer;
+  flex-shrink:0;
+}
+
+.item{
+  cursor:pointer;
+  }
 </style>
 </head>
 
@@ -339,36 +354,35 @@ body{
 
     <button class="addBtn" onclick="addItem()">＋ Add new item</button>
   </div>
+<h2 style="font-size:18px;margin-bottom:14px;">Quick templates</h2>
 
-  <h2 style="font-size:18px;margin-bottom:14px;">Quick templates</h2>
+<div class="templateGrid">
 
-  <div class="templateGrid">
-
-    <div class="template">
-      <div class="templateIcon">💼</div>
-      <div class="templateName">Office</div>
-      <div class="templateDesc">Work essentials</div>
-    </div>
-
-    <div class="template">
-      <div class="templateIcon">🎓</div>
-      <div class="templateName">School</div>
-      <div class="templateDesc">Study essentials</div>
-    </div>
-
-    <div class="template">
-      <div class="templateIcon">✈️</div>
-      <div class="templateName">Travel</div>
-      <div class="templateDesc">Travel checklist</div>
-    </div>
-
-    <div class="template">
-      <div class="templateIcon">🛒</div>
-      <div class="templateName">Shopping</div>
-      <div class="templateDesc">Shopping list</div>
-    </div>
-
+  <div class="template" onclick="loadTemplate('office')">
+    <div class="templateIcon">💼</div>
+    <div class="templateName">Office</div>
+    <div class="templateDesc">Work essentials</div>
   </div>
+
+  <div class="template" onclick="loadTemplate('school')">
+    <div class="templateIcon">🎓</div>
+    <div class="templateName">School</div>
+    <div class="templateDesc">Study essentials</div>
+  </div>
+
+  <div class="template" onclick="loadTemplate('travel')">
+    <div class="templateIcon">✈️</div>
+    <div class="templateName">Travel</div>
+    <div class="templateDesc">Travel checklist</div>
+  </div>
+
+  <div class="template" onclick="loadTemplate('shopping')">
+    <div class="templateIcon">🛒</div>
+    <div class="templateName">Shopping</div>
+    <div class="templateDesc">Shopping list</div>
+  </div>
+
+</div>
 
   <div class="bottomNav">
     <div class="navItem active">
@@ -410,13 +424,29 @@ function updateProgress(){
 }
 
 document.getElementById("checklist").addEventListener("click",function(e){
+
+  // Delete item
+  if(e.target.closest(".deleteBtn")){
+    const item=e.target.closest(".item");
+
+    if(item){
+      item.remove();
+      saveChecklist();
+      updateProgress();
+    }
+
+    return;
+  }
+
+  // Check / uncheck item
   const item=e.target.closest(".item");
   if(!item)return;
 
   item.classList.toggle("checked");
+
+  saveChecklist();
   updateProgress();
 });
-
 function addItem(){
   const name=prompt("Enter checklist item:");
   if(!name||!name.trim())return;
@@ -425,10 +455,11 @@ function addItem(){
   item.className="item";
 
   item.innerHTML=`
-    <div class="check"></div>
-    <div class="itemText"></div>
-    <div class="itemIcon">📌</div>
-  `;
+  <div class="check"></div>
+  <div class="itemText"></div>
+  <div class="itemIcon">📌</div>
+  <button class="deleteBtn" type="button">✕</button>
+`;
 
   item.querySelector(".itemText").textContent=name.trim();
 
@@ -483,6 +514,79 @@ function loadChecklist(){
     document.getElementById("checklist").appendChild(item);
   });
 }
+  // ---------- QUICK TEMPLATES ----------
+
+function loadTemplate(type){
+
+  const templates={
+    office:[
+      ["Laptop","💻"],
+      ["Laptop charger","🔌"],
+      ["Office ID","🪪"],
+      ["Wallet","👛"],
+      ["Phone","📱"],
+      ["Keys","🔑"]
+    ],
+
+    school:[
+      ["Books","📚"],
+      ["Notebook","📒"],
+      ["Pen","🖊️"],
+      ["School ID","🪪"],
+      ["Water bottle","💧"],
+      ["Lunch box","🍱"]
+    ],
+
+    travel:[
+      ["Tickets","🎫"],
+      ["ID / Documents","📄"],
+      ["Clothes","👕"],
+      ["Medicines","💊"],
+      ["Charger","🔌"],
+      ["Wallet","👛"]
+    ],
+
+    shopping:[
+      ["Shopping bags","🛍️"],
+      ["Wallet","👛"],
+      ["Shopping list","📝"],
+      ["Phone","📱"],
+      ["Keys","🔑"]
+    ]
+  };
+
+  const selected=templates[type];
+  if(!selected)return;
+
+  const checklist=document.getElementById("checklist");
+
+  checklist.innerHTML="";
+
+  selected.forEach(data=>{
+    const item=document.createElement("div");
+    item.className="item";
+
+item.innerHTML=`
+  <div class="check"></div>
+  <div class="itemText"></div>
+  <div class="itemIcon"></div>
+  <button class="deleteBtn" type="button">✕</button>
+`;
+
+    item.querySelector(".itemText").textContent=data[0];
+    item.querySelector(".itemIcon").textContent=data[1];
+
+    checklist.appendChild(item);
+  });
+
+  saveChecklist();
+  updateProgress();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+  }
 
 // ---------- AUTO SAVE ----------
 
