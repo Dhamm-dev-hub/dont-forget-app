@@ -1,108 +1,120 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Open World India - Lite</title>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>City Strike FPS</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#9ec8e8;font-family:system-ui,Arial;color:white;touch-action:none}
-#game{position:fixed;inset:0}canvas{display:block}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#111;touch-action:none;font-family:system-ui,Arial;color:#fff}
+#game{position:fixed;inset:0}canvas{width:100%;height:100%;display:block}
 #hud{position:fixed;inset:0;pointer-events:none}
-.top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:flex-start}
-.panel{background:#111a25c9;border:1px solid #ffffff2c;border-radius:12px;padding:9px 12px;backdrop-filter:blur(5px)}
-#speed{font-size:25px;font-weight:800;line-height:1}#speed small{font-size:11px}
-#title{font-size:10px;color:#d2dfeb;margin-top:5px;letter-spacing:.8px}
-#mission{font-size:11px;text-align:right;max-width:48vw}
-#controls{position:absolute;bottom:14px;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end;padding:0 14px;pointer-events:auto}
-.cluster{display:flex;gap:9px}
-.btn{width:62px;height:62px;border-radius:17px;border:1px solid #ffffff45;background:#152433c9;color:white;font-size:23px;font-weight:bold;touch-action:none;user-select:none}
-.btn:active,.btn.on{background:#2879cb}
-#gas{background:#187443d9;font-size:16px;width:70px;height:72px}#brake{background:#9d3332d9;font-size:12px;width:58px;height:58px}
-#reset{position:absolute;right:12px;top:80px;pointer-events:auto;background:#152433c9;color:white;border:1px solid #ffffff3c;border-radius:10px;padding:8px 11px}
-#notice{position:absolute;top:66px;left:50%;transform:translateX(-50%);background:#152433c9;border-radius:18px;padding:6px 10px;font-size:11px;white-space:nowrap}
-#mini{position:absolute;right:12px;bottom:103px;width:92px;height:92px;background:#12202ac9;border:1px solid #ffffff55;border-radius:10px}
-@media(min-width:700px){.btn{width:72px;height:72px}#mini{width:120px;height:120px}}
-</style></head><body><div id="game"></div><div id="hud">
-<div class="top"><div class="panel"><div id="speed">0 <small>KM/H</small></div><div id="title">OPEN WORLD INDIA · LITE</div></div><div class="panel" id="mission">Free drive · Explore city</div></div>
-<div id="notice">Hold GAS · ◀ ▶ steer · WASD keyboard</div><button id="reset">↻ Reset</button>
-<div id="controls"><div class="cluster"><button class="btn" id="left">◀</button><button class="btn" id="right">▶</button></div><div class="cluster"><button class="btn" id="brake">BRAKE</button><button class="btn" id="gas">GAS ▲</button></div></div>
-<canvas id="mini" width="120" height="120"></canvas></div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+.top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:8px}
+.box{background:#101820c9;border:1px solid #ffffff30;border-radius:12px;padding:8px 12px;font-weight:700;text-shadow:0 1px 2px #000}
+#health{color:#63e58a}#ammo{color:#ffe278}#wave{font-size:13px}
+#cross{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:26px;font-weight:300;text-shadow:0 0 8px #fff;line-height:1}
+#message{position:absolute;top:70px;left:50%;transform:translateX(-50%);font-size:13px;background:#101820bd;border-radius:20px;padding:6px 11px;white-space:nowrap}
+#controls{position:absolute;bottom:14px;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end;padding:0 12px;pointer-events:auto}
+.pad{display:grid;grid-template-columns:54px 54px 54px;grid-template-rows:52px 52px;gap:5px}
+.btn{border:1px solid #ffffff48;background:#142433d9;color:white;border-radius:15px;font-size:22px;font-weight:800;touch-action:none;user-select:none}
+.btn:active,.btn.down{background:#2779c5}
+#forward{grid-column:2;grid-row:1}#left{grid-column:1;grid-row:2}#back{grid-column:2;grid-row:2}#right{grid-column:3;grid-row:2}
+#action{display:flex;gap:8px;align-items:flex-end}
+#shoot{width:78px;height:78px;border-radius:50%;background:#a82b2bdc;font-size:18px;border:2px solid #ffffff70}
+#reload{width:64px;height:58px;font-size:13px;background:#263746d9}
+#restart{position:absolute;top:110px;right:12px;pointer-events:auto;background:#172532;border:1px solid #ffffff55;color:#fff;border-radius:10px;padding:8px}
+#overlay{position:absolute;inset:0;background:#080e16d9;display:flex;align-items:center;justify-content:center;pointer-events:auto}
+#card{background:#172532;border:1px solid #ffffff3c;border-radius:18px;padding:24px;max-width:320px;text-align:center}
+#card h1{margin:0 0 6px;font-size:27px}#card p{color:#c4d1dc;font-size:14px;line-height:1.5}
+#start{background:#2185dc;color:white;border:0;border-radius:12px;padding:12px 22px;font-size:16px;font-weight:800}
+@media(min-width:700px){.pad .btn{width:60px;height:56px}#shoot{width:90px;height:90px}}
+</style></head><body>
+<div id="game"><canvas id="screen"></canvas></div>
+<div id="hud"><div class="top"><div class="box" id="health">❤️ 100</div><div class="box" id="wave">WAVE 1</div><div class="box" id="ammo">🔫 12 / 12</div><div class="box">SCORE <span id="score">0</span></div></div>
+<div id="cross">+</div><div id="message">Clear the arena! Swipe to turn · Tap SHOOT</div>
+<button id="restart">↻ Restart</button>
+<div id="controls"><div class="pad"><button class="btn" id="forward">▲</button><button class="btn" id="left">◀</button><button class="btn" id="back">▼</button><button class="btn" id="right">▶</button></div><div id="action"><button class="btn" id="reload">RELOAD</button><button class="btn" id="shoot">SHOOT</button></div></div></div>
+<div id="overlay"><div id="card"><h1>⚔️ CITY STRIKE</h1><p>Lightweight arena FPS.<br>Move, aim, shoot enemies, survive waves.<br><small>PC: WASD + mouse · Mobile: buttons + swipe to turn</small></p><button id="start">START GAME</button></div></div>
 <script>
-(()=>{const root=document.getElementById('game');if(!window.THREE){root.innerHTML='<p style="color:#fff;padding:24px">3D library load failed. Internet on karke reload karein.</p>';return}
-const T=THREE,scene=new T.Scene();scene.background=new T.Color(0xa9d2f0);scene.fog=new T.Fog(0xa9d2f0,140,430);
-const camera=new T.PerspectiveCamera(60,innerWidth/innerHeight,.1,500);
-const renderer=new T.WebGLRenderer({antialias:false,powerPreference:'low-power'});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;root.appendChild(renderer.domElement);
-scene.add(new T.HemisphereLight(0xe5f5ff,0x6c604a,2.1));const sun=new T.DirectionalLight(0xffedcf,1.6);sun.position.set(-60,90,40);scene.add(sun);
-const material=(color,rough=1)=>new T.MeshLambertMaterial({color});
-const grassMat=material(0x6d9658),roadMat=material(0x353b40),sideMat=material(0xb9b6ad),lineMat=material(0xe5dfc9),treeMat=material(0x4c8b47),trunkMat=material(0x79553b);
-function mesh(geo,mat,pos,rot){let m=new T.Mesh(geo,mat);m.position.set(...pos);if(rot)m.rotation.set(...rot);scene.add(m);return m}
-mesh(new T.PlaneGeometry(600,600),grassMat,[0,-.1,0],[-Math.PI/2,0,0]);
-const spacing=42, roadW=12, cityRange=168;
-// roads at repeating grid
-for(let i=-4;i<=4;i++){
- const p=i*spacing;
- mesh(new T.PlaneGeometry(roadW,cityRange*2),roadMat,[p,.01,0],[-Math.PI/2,0,0]);
- mesh(new T.PlaneGeometry(cityRange*2,roadW),roadMat,[0,.012,p],[-Math.PI/2,0,0]);
- // simplified dashed center lines
- for(let z=-cityRange;z<cityRange;z+=18)mesh(new T.PlaneGeometry(.16,5),lineMat,[p,.04,z],[-Math.PI/2,0,0]);
- for(let x=-cityRange;x<cityRange;x+=18)mesh(new T.PlaneGeometry(5,.16),lineMat,[x,.04,p],[-Math.PI/2,0,0]);
-}
-// low count buildings with simple facade windows via canvas textures (one texture shared)
-function facadeTexture(base='#c9b59b'){
- const c=document.createElement('canvas');c.width=128;c.height=128;const ctx=c.getContext('2d');ctx.fillStyle=base;ctx.fillRect(0,0,128,128);
- for(let y=10;y<118;y+=23)for(let x=8;x<120;x+=21){ctx.fillStyle='#4a6575';ctx.fillRect(x,y,12,14);ctx.fillStyle='#ded5c3';ctx.fillRect(x-2,y+14,16,2)}
- ctx.fillStyle='#ab8c6b';ctx.fillRect(0,0,128,6);ctx.fillRect(0,122,128,6);const tx=new T.CanvasTexture(c);tx.colorSpace=T.SRGBColorSpace;return tx}
-const facade=[facadeTexture('#d3b48e'),facadeTexture('#c5c8c0'),facadeTexture('#d6c7a7'),facadeTexture('#b7c8cc'),facadeTexture('#cfa7a0')];
-const bmat=facade.map(t=>new T.MeshLambertMaterial({map:t}));
-const buildingGeo=new T.BoxGeometry(1,1,1);
-for(let gx=-4;gx<4;gx++)for(let gz=-4;gz<4;gz++){
- const centerX=gx*spacing+spacing/2,centerZ=gz*spacing+spacing/2;
- // two buildings per block (not four), leaving open courtyard, reduced draw calls
- for(let n=0;n<2;n++){
-  const x=centerX+(n===0?-8:8),z=centerZ+(n===0?7:-7),h=9+Math.random()*17,w=11+Math.random()*3,d=12;
-  const b=new T.Mesh(buildingGeo,bmat[Math.floor(Math.random()*bmat.length)]);
-  b.scale.set(w,h,d);b.position.set(x,h/2,z);scene.add(b);
-  // roof slab simple
-  const roof=new T.Mesh(new T.BoxGeometry(w+.3,.35,d+.3),material(0x8d8b84));roof.position.set(x,h+.15,z);scene.add(roof);
+(()=>{
+const canvas=document.getElementById('screen'),ctx=canvas.getContext('2d');
+let W,H,lowScale=0.72;function resize(){W=innerWidth;H=innerHeight;canvas.width=Math.floor(W*lowScale);canvas.height=Math.floor(H*lowScale)}resize();addEventListener('resize',resize);
+const map=[
+"1111111111111111",
+"1000000000000001",
+"1000100000010001",
+"1000100000010001",
+"1000000000000001",
+"1010000110000101",
+"1000000000000001",
+"1000110001100001",
+"1000110001100001",
+"1000000000000001",
+"1010000000000101",
+"1000001001000001",
+"1000001001000001",
+"1000000000000001",
+"1000000000000001",
+"1111111111111111"
+].map(r=>r.split('').map(Number));
+const MAP=map.length, TILE=1, player={x:3.5,y:3.5,a:0,hp:100};
+const keys={f:false,b:false,l:false,r:false};let running=false,score=0,ammo=12,maxAmmo=12,wave=1,reloading=false,shootHeld=false,shootCooldown=0,damageFlash=0,gunKick=0;
+let enemies=[],particles=[];
+function wall(x,y){return map[Math.floor(y)]?.[Math.floor(x)]===1}
+function safeSpawn(){let x,y;do{x=1.5+Math.random()*13;y=1.5+Math.random()*13}while(wall(x,y)||Math.hypot(x-player.x,y-player.y)<5);return{x,y,hp:2,alive:true,attack:0,hit:0}}
+function spawnWave(){enemies=[];let count=3+wave*2;for(let i=0;i<count;i++)enemies.push(safeSpawn());document.getElementById('wave').textContent='WAVE '+wave}
+function reset(){player.x=3.5;player.y=3.5;player.a=0;player.hp=100;score=0;wave=1;ammo=maxAmmo;running=true;reloading=false;spawnWave();document.getElementById('overlay').style.display='none';updateHud()}
+function updateHud(){document.getElementById('health').textContent='❤️ '+Math.max(0,Math.ceil(player.hp));document.getElementById('ammo').textContent='🔫 '+ammo+' / '+maxAmmo;document.getElementById('score').textContent=score}
+document.getElementById('start').onclick=reset;document.getElementById('restart').onclick=()=>{document.getElementById('overlay').style.display='flex';document.querySelector('#card h1').textContent='⚔️ CITY STRIKE';document.querySelector('#card p').innerHTML='Ready for another round?';document.getElementById('start').textContent='RESTART';};
+function hold(id,key){let el=document.getElementById(id);function down(e){e.preventDefault();keys[key]=true;el.classList.add('down')}function up(){keys[key]=false;el.classList.remove('down')}el.addEventListener('pointerdown',down);['pointerup','pointercancel','pointerleave'].forEach(e=>el.addEventListener(e,up))}
+hold('forward','f');hold('back','b');hold('left','l');hold('right','r');
+addEventListener('keydown',e=>{if(e.key.toLowerCase()==='w'||e.key==='ArrowUp')keys.f=true;if(e.key.toLowerCase()==='s'||e.key==='ArrowDown')keys.b=true;if(e.key.toLowerCase()==='a'||e.key==='ArrowLeft')keys.l=true;if(e.key.toLowerCase()==='d'||e.key==='ArrowRight')keys.r=true;if(e.key===' '){e.preventDefault();shoot()}if(e.key.toLowerCase()==='r')reload()});
+addEventListener('keyup',e=>{if(e.key.toLowerCase()==='w'||e.key==='ArrowUp')keys.f=false;if(e.key.toLowerCase()==='s'||e.key==='ArrowDown')keys.b=false;if(e.key.toLowerCase()==='a'||e.key==='ArrowLeft')keys.l=false;if(e.key.toLowerCase()==='d'||e.key==='ArrowRight')keys.r=false});
+let
+ touchX=null;canvas.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){touchX=e.clientX}});canvas.addEventListener('pointermove',e=>{if(touchX!==null&&e.pointerType==='touch'){let dx=e.clientX-touchX;player.a+=dx*.006;touchX=e.clientX}});canvas.addEventListener('pointerup',()=>touchX=null);canvas.addEventListener('pointercancel',()=>touchX=null);
+document.getElementById('shoot').addEventListener('pointerdown',e=>{e.preventDefault();shootHeld=true;shoot()});document.getElementById('shoot').addEventListener('pointerup',()=>shootHeld=false);document.getElementById('shoot').addEventListener('pointercancel',()=>shootHeld=false);document.getElementById('shoot').addEventListener('pointerleave',()=>shootHeld=false);
+document.getElementById('reload').onclick=reload;
+function reload(){if(!running||reloading||ammo===maxAmmo)return;reloading=true;document.getElementById('message').textContent='Reloading...';setTimeout(()=>{ammo=maxAmmo;reloading=false;document.getElementById('message').textContent='Enemies incoming!';updateHud()},900)}
+function shoot(){if(!running||reloading||shootCooldown>0)return;if(ammo<=0){reload();return}ammo--;shootCooldown=.22;gunKick=.12;updateHud();
+ // target nearest enemy within aim cone
+ let chosen=null,best=0.22;for(const en of enemies){if(!en.alive)continue;let dx=en.x-player.x,dy=en.y-player.y,dist=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)-player.a;ang=Math.atan2(Math.sin(ang),Math.cos(ang));let cone=Math.abs(ang);if(dist<10&&cone<best){best=cone;chosen=en}}
+ if(chosen){chosen.hp--;chosen.hit=.16;particles.push({x:chosen.x,y:chosen.y,life:.2});if(chosen.hp<=0){chosen.alive=false;score+=100;updateHud()}}}
+function endGame(){running=false;document.getElementById('overlay').style.display='flex';document.querySelector('#card h1').textContent='GAME OVER';document.querySelector('#card p').innerHTML=`Score: <b>${score}</b><br>Reached wave ${wave}. Try again!`;document.getElementById('start').textContent='PLAY AGAIN'}
+const fov=Math.PI/3, rays=canvas.width;
+function rayCast(angle){let sin=Math.sin(angle),cos=Math.cos(angle);let d=0,step=.035;while(d<18){d+=step;let x=player.x+cos*d,y=player.y+sin*d;if(wall(x,y))return d}return 18}
+function render(){
+ if(!W||!H)return;const cw=canvas.width,ch=canvas.height;
+ // sky/ground gradient
+ const sky=ctx.createLinearGradient(0,0,0,ch/2);sky.addColorStop(0,'#466d91');sky.addColorStop(1,'#c5d6dc');ctx.fillStyle=sky;ctx.fillRect(0,0,cw,ch/2);
+ const ground=ctx.createLinearGradient(0,ch/2,0,ch);ground.addColorStop(0,'#575b58');ground.addColorStop(1,'#292c2c');ctx.fillStyle=ground;ctx.fillRect(0,ch/2,cw,ch/2);
+ const depth=new Array(cw);
+ for(let x=0;x<cw;x++){const angle=player.a+(x/cw-.5)*fov;let d=rayCast(angle);d*=Math.cos(angle-player.a);depth[x]=d;let h=Math.min(ch,d>0?ch/(d*.72):ch),top=ch/2-h/2;let shade=Math.max(.2,1-d/12);let col=Math.floor(105*shade);ctx.fillStyle=`rgb(${col+20},${col+25},${col+30})`;ctx.fillRect(x,top,1,h); // subtle wall bands
+ if(h>15&&x%6===0){ctx.fillStyle=`rgba(18,20,24,${.1+(.3*(1-shade))})`;ctx.fillRect(x,top,1,h)}
  }
+ // enemy billboard projections, sorted far to near
+ const sorted=enemies.filter(e=>e.alive).map(e=>{let dx=e.x-player.x,dy=e.y-player.y,dist=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)-player.a;ang=Math.atan2(Math.sin(ang),Math.cos(ang));return{e,dist,ang}}).sort((a,b)=>b.dist-a.dist);
+ for(const s of sorted){if(Math.abs(s.ang)>fov*.65||s.dist<.2)continue;let sx=(.5+s.ang/fov)*cw,scale=Math.min(ch*.45,ch/(s.dist*1.2)),base=ch/2+scale*.42;let pxw=scale*.45;
+ // enemy simple pixel-styled soldier silhouette with head and body
+ ctx.save();ctx.translate(sx,base);let isHit=s.e.hit>0;ctx.fillStyle=isHit?'#ffbd56':'#2c503e';ctx.fillRect(-pxw*.5,-scale*.45,pxw,scale*.58);
+ ctx.fillStyle=isHit?'#fff2d0':'#405c4b';ctx.fillRect(-pxw*.7,-scale*.22,pxw*.25,scale*.55);ctx.fillRect(pxw*.45,-scale*.22,pxw*.25,scale*.55);
+ ctx.fillStyle='#c28d69';ctx.beginPath();ctx.arc(0,-scale*.58,pxw*.35,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#172b24';ctx.fillRect(-pxw*.32,-scale*.65,pxw*.64,scale*.13);
+ ctx.fillStyle='#111';ctx.fillRect(-pxw*.38,scale*.1,pxw*.3,scale*.35);ctx.fillRect(pxw*.08,scale*.1,pxw*.3,scale*.35);
+ // enemy health tick
+ ctx.fillStyle='#8c2222';ctx.fillRect(-pxw*.6,-scale*.83,pxw*1.2,4);ctx.fillStyle='#5ae17d';ctx.fillRect(-pxw*.6,-scale*.83,pxw*1.2*(s.e.hp/2),4);
+ ctx.restore();
+ }
+ // weapon silhouette lower-center
+ const gunY=ch*.89+gunKick*ch*.2;ctx.fillStyle='#121a20';ctx.beginPath();ctx.moveTo(cw*.42,ch);ctx.lineTo(cw*.45,gunY);ctx.lineTo(cw*.55,gunY);ctx.lineTo(cw*.59,ch);ctx.fill();ctx.fillStyle='#384a55';ctx.fillRect(cw*.47,gunY-8,cw*.06,14);
+ // crosshair
+ ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(cw/2-8,ch/2);ctx.lineTo(cw/2-3,ch/2);ctx.moveTo(cw/2+3,ch/2);ctx.lineTo(cw/2+8,ch/2);ctx.moveTo(cw/2,ch/2-8);ctx.lineTo(cw/2,ch/2-3);ctx.moveTo(cw/2,ch/2+3);ctx.lineTo(cw/2,ch/2+8);ctx.stroke();
+ if(damageFlash>0){ctx.fillStyle=`rgba(220,20,20,${damageFlash})`;ctx.fillRect(0,0,cw,ch)}
 }
-// street trees: fewer, lightweight flat-ish low poly
-const treeGeo=new T.ConeGeometry(2.1,4.8,5),trunkGeo=new T.CylinderGeometry(.22,.3,1.7,5);
-for(let i=-4;i<=4;i++)for(let j=-4;j<=4;j++){
- const x=i*spacing+roadW/2+3.2,z=j*spacing+roadW/2+3.5;
- if(Math.random()<.62){mesh(trunkGeo,trunkMat,[x,.85,z]);mesh(treeGeo,treeMat,[x,3.8,z]);}
-}
-// car models with efficient grouped geometry, no shadows
-function carBuild(color=0xe13d30){const group=new T.Group(),bodyMat=material(color),glassMat=material(0x315267),wheelMat=material(0x191b1e);
- const add=(geo,ma,pos)=>{const m=new T.Mesh(geo,ma);m.position.set(...pos);group.add(m);return m};
- add(new T.BoxGeometry(2,0.62,4.1),bodyMat,[0,.65,0]);add(new T.BoxGeometry(1.55,.82,2.15),glassMat,[0,1.28,-.15]);
- add(new T.BoxGeometry(1.9,.18,1.05),bodyMat,[0,1,1.35]);
- for(const x of [-1,1])for(const z of [-1.35,1.35]){const wheel=add(new T.CylinderGeometry(.36,.36,.23,8),wheelMat,[x*1.03,.38,z]);wheel.rotation.z=Math.PI/2}
- const head=material(0xffe8b0),tail=material(0xff3b30);
- add(new T.BoxGeometry(.32,.15,.1),head,[-.68,.76,2.08]);add(new T.BoxGeometry(.32,.15,.1),head,[.68,.76,2.08]);
- add(new T.BoxGeometry(.32,.15,.1),tail,[-.68,.7,-2.08]);add(new T.BoxGeometry(.32,.15,.1),tail,[.68,.7,-2.08]);
- return group}
-const player=carBuild(0xc92e23);player.position.set(0,0,4);scene.add(player);
-const traffic=[];const colors=[0xe8e4dd,0x2874b9,0x2c2e34,0xe2b72d,0x4b965b];
-for(let i=0;i<12;i++){const c=carBuild(colors[i%colors.length]),isVertical=Math.random()<.5,roadIndex=Math.floor(Math.random()*7)-3,lane=(Math.random()<.5?-2.7:2.7);
- if(isVertical){c.position.set(roadIndex*spacing+lane,0,(Math.random()-.5)*cityRange*1.7);c.rotation.y=Math.random()<.5?0:Math.PI}else{c.position.set((Math.random()-.5)*cityRange*1.7,0,roadIndex*spacing+lane);c.rotation.y=Math.random()<.5?Math.PI/2:-Math.PI/2}
- scene.add(c);traffic.push({car:c,vertical:isVertical,dir:Math.random()<.5?-1:1,v:4+Math.random()*4})}
-const input={gas:false,brake:false,left:false,right:false};function hold(id,k){const el=document.getElementById(id);function down(e){e.preventDefault();input[k]=true;el.classList.add('on')}function up(e){input[k]=false;el.classList.remove('on')}el.addEventListener('pointerdown',down);['pointerup','pointercancel','pointerleave'].forEach(ev=>el.addEventListener(ev,up))}
-hold('gas','gas');hold('brake','brake');hold('left','left');hold('right','right');
-addEventListener('keydown',e=>{if(e.key==='ArrowUp'||e.key.toLowerCase()==='w')input.gas=true;if(e.key==='ArrowDown'||e.key.toLowerCase()==='s')input.brake=true;if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')input.left=true;if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')input.right=true});
-addEventListener('keyup',e=>{if(e.key==='ArrowUp'||e.key.toLowerCase()==='w')input.gas=false;if(e.key==='ArrowDown'||e.key.toLowerCase()==='s')input.brake=false;if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')input.left=false;if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')input.right=false});
-let v=0,angle=0;document.getElementById('reset').onclick=()=>{player.position.set(0,0,4);v=0;angle=0;player.rotation.y=0};
-const map=document.getElementById('mini').getContext('2d');function minimap(){map.clearRect(0,0,120,120);map.fillStyle='#273c45';map.fillRect(0,0,120,120);map.strokeStyle='#929d9f';map.lineWidth=4;for(let p=0;p<120;p+=12){map.beginPath();map.moveTo(p,0);map.lineTo(p,120);map.moveTo(0,p);map.lineTo(120,p);map.stroke()}map.fillStyle='#ffe06a';map.beginPath();map.arc(60+player.position.x*.18,60+player.position.z*.18,4,0,Math.PI*2);map.fill()}
-let prev=performance.now();function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-prev)/1000,.035);prev=now;
- if(input.gas)v=Math.min(24,v+10*dt);else v*=Math.pow(.975,dt*60);
- if(input.brake)v=Math.max(-5,v-17*dt);
- const steer=(input.left?1:0)-(input.right?1:0);angle+=steer*1.5*dt*(.25+Math.abs(v)/24);
- player.rotation.y=angle;player.position.x+=Math.sin(angle)*v*dt;player.position.z+=Math.cos(angle)*v*dt;
- const roadCheck=Math.abs(player.position.x%spacing)<roadW/2+1||Math.abs(player.position.z%spacing)<roadW/2+1;if(!roadCheck&&Math.abs(v)>2)v*=.92;
- const bound=cityRange-7;player.position.x=Math.max(-bound,Math.min(bound,player.position.x));player.position.z=Math.max(-bound,Math.min(bound,player.position.z));
- traffic.forEach(t=>{if(t.vertical)t.car.position.z+=t.dir*t.v*dt;else t.car.position.x+=t.dir*t.v*dt;const b=cityRange*1.6;if(Math.abs(t.car.position.x)>b||Math.abs(t.car.position.z)>b)t.dir*=-1});
- const target=new T.Vector3(player.position.x,1.25,player.position.z),offset=new T.Vector3(-Math.sin(angle)*9,4.4,-Math.cos(angle)*9);camera.position.lerp(target.clone().add(offset),1-Math.pow(.0008,dt));camera.lookAt(target.clone().add(new T.Vector3(Math.sin(angle)*2,0,Math.cos(angle)*3)));
- document.getElementById('speed').innerHTML=Math.round(Math.abs(v)*3.6)+' <small>KM/H</small>';minimap();renderer.render(scene,camera)}
-requestAnimationFrame(frame);addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+let last=performance.now();function loop(now){let dt=Math.min((now-last)/1000,.05);last=now;
+ if(running){
+  shootCooldown=Math.max(0,shootCooldown-dt);gunKick=Math.max(0,gunKick-dt);damageFlash=Math.max(0,damageFlash-dt*2);
+  if(shootHeld&&shootCooldown<=0)shoot();
+  let move=(keys.f?1:0)-(keys.b?1:0),turn=(keys.r?1:0)-(keys.l?1:0);
+  player.a+=turn*2.3*dt;let speed=move*2.5*dt;let nx=player.x+Math.cos(player.a)*speed,ny=player.y+Math.sin(player.a)*speed;if(!wall(nx,player.y))player.x=nx;if(!wall(player.x,ny))player.y=ny;
+  for(const en of enemies){if(!en.alive)continue;en.hit=Math.max(0,en.hit-dt);let dx=player.x-en.x,dy=player.y-en.y,d=Math.hypot(dx,dy);if(d>1.25){let pace=(.35+wave*.04)*dt,nx=en.x+dx/d*pace,ny=en.y+dy/d*pace;if(!wall(nx,en.y))en.x=nx;if(!wall(en.x,ny))en.y=ny}else{en.attack-=dt;if(en.attack<=0){player.hp-=8;damageFlash=.22;en.attack=1.05;updateHud();if(player.hp<=0)endGame()}}}
+  if(enemies.every(e=>!e.alive)){wave++;ammo=maxAmmo;spawnWave();document.getElementById('message').textContent='Wave '+wave+'!';}
+ }
+ render();requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
 })();
 </script></body></html>
