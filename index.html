@@ -1,120 +1,150 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>City Strike FPS</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Candy Blast Infinity</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#111;touch-action:none;font-family:system-ui,Arial;color:#fff}
-#game{position:fixed;inset:0}canvas{width:100%;height:100%;display:block}
-#hud{position:fixed;inset:0;pointer-events:none}
-.top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:8px}
-.box{background:#101820c9;border:1px solid #ffffff30;border-radius:12px;padding:8px 12px;font-weight:700;text-shadow:0 1px 2px #000}
-#health{color:#63e58a}#ammo{color:#ffe278}#wave{font-size:13px}
-#cross{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:26px;font-weight:300;text-shadow:0 0 8px #fff;line-height:1}
-#message{position:absolute;top:70px;left:50%;transform:translateX(-50%);font-size:13px;background:#101820bd;border-radius:20px;padding:6px 11px;white-space:nowrap}
-#controls{position:absolute;bottom:14px;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end;padding:0 12px;pointer-events:auto}
-.pad{display:grid;grid-template-columns:54px 54px 54px;grid-template-rows:52px 52px;gap:5px}
-.btn{border:1px solid #ffffff48;background:#142433d9;color:white;border-radius:15px;font-size:22px;font-weight:800;touch-action:none;user-select:none}
-.btn:active,.btn.down{background:#2779c5}
-#forward{grid-column:2;grid-row:1}#left{grid-column:1;grid-row:2}#back{grid-column:2;grid-row:2}#right{grid-column:3;grid-row:2}
-#action{display:flex;gap:8px;align-items:flex-end}
-#shoot{width:78px;height:78px;border-radius:50%;background:#a82b2bdc;font-size:18px;border:2px solid #ffffff70}
-#reload{width:64px;height:58px;font-size:13px;background:#263746d9}
-#restart{position:absolute;top:110px;right:12px;pointer-events:auto;background:#172532;border:1px solid #ffffff55;color:#fff;border-radius:10px;padding:8px}
-#overlay{position:absolute;inset:0;background:#080e16d9;display:flex;align-items:center;justify-content:center;pointer-events:auto}
-#card{background:#172532;border:1px solid #ffffff3c;border-radius:18px;padding:24px;max-width:320px;text-align:center}
-#card h1{margin:0 0 6px;font-size:27px}#card p{color:#c4d1dc;font-size:14px;line-height:1.5}
-#start{background:#2185dc;color:white;border:0;border-radius:12px;padding:12px 22px;font-size:16px;font-weight:800}
-@media(min-width:700px){.pad .btn{width:60px;height:56px}#shoot{width:90px;height:90px}}
-</style></head><body>
-<div id="game"><canvas id="screen"></canvas></div>
-<div id="hud"><div class="top"><div class="box" id="health">❤️ 100</div><div class="box" id="wave">WAVE 1</div><div class="box" id="ammo">🔫 12 / 12</div><div class="box">SCORE <span id="score">0</span></div></div>
-<div id="cross">+</div><div id="message">Clear the arena! Swipe to turn · Tap SHOOT</div>
-<button id="restart">↻ Restart</button>
-<div id="controls"><div class="pad"><button class="btn" id="forward">▲</button><button class="btn" id="left">◀</button><button class="btn" id="back">▼</button><button class="btn" id="right">▶</button></div><div id="action"><button class="btn" id="reload">RELOAD</button><button class="btn" id="shoot">SHOOT</button></div></div></div>
-<div id="overlay"><div id="card"><h1>⚔️ CITY STRIKE</h1><p>Lightweight arena FPS.<br>Move, aim, shoot enemies, survive waves.<br><small>PC: WASD + mouse · Mobile: buttons + swipe to turn</small></p><button id="start">START GAME</button></div></div>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box}
+:root{--pink:#ff62b9;--purple:#7c3aed;--blue:#4cc9f0;--gold:#ffcf43}
+body{margin:0;min-height:100vh;font-family:Fredoka,system-ui,sans-serif;color:#fff;overflow-x:hidden;background:radial-gradient(ellipse at 20% 15%,#ff9fd5 0,transparent 36%),radial-gradient(ellipse at 85% 35%,#8e6cff 0,transparent 42%),linear-gradient(150deg,#28165e,#6d2aa9 55%,#35116a)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.2;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:27px 27px;animation:twinkle 5s infinite alternate}
+@keyframes twinkle{from{opacity:.1}to{opacity:.3}}
+.wrap{max-width:490px;margin:auto;padding:14px 13px 28px;position:relative}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.logo{font-size:clamp(22px,6vw,34px);font-weight:700;line-height:1;text-shadow:0 3px 0 #6d237f,0 6px 12px #250b45;letter-spacing:.3px}
+.logo span{color:#ffef72}
+.iconbtn{border:2px solid #ffffff66;background:#ffffff20;color:white;border-radius:14px;padding:9px 12px;font-size:20px;box-shadow:0 4px 0 #35155c;cursor:pointer}
+.level-card{margin:12px 0 10px;padding:11px 14px;border:2px solid #ffffff55;border-radius:19px;background:linear-gradient(135deg,#ffffff2b,#ffffff10);box-shadow:0 7px 18px #1a073655,inset 0 1px #fff5}
+.stats{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.stat{text-align:center;min-width:65px}
+.stat small{display:block;font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:.8}
+.stat strong{font-size:24px;text-shadow:0 2px 3px #4c177a}
+.score{color:#fff3a4}
+.goal{display:flex;align-items:center;gap:9px;justify-content:center;margin-top:8px;font-size:14px}
+.goal .candymini{font-size:25px;filter:drop-shadow(0 2px 2px #0004)}
+.progress{height:10px;background:#35135e88;border-radius:20px;overflow:hidden;margin-top:8px;border:1px solid #ffffff33}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffe45d,#ff9c37,#ff68be);border-radius:20px;transition:width .4s}
+.board-shell{padding:8px;border-radius:23px;background:linear-gradient(145deg,#ffffff4b,#ffffff14);box-shadow:0 10px 25px #1b064e66,inset 0 1px 0 #ffffff80;border:2px solid #ffffff55;position:relative}
+.board{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;aspect-ratio:1;background:#36145c70;padding:5px;border-radius:16px;touch-action:manipulation}
+.cell{border:0;padding:0;display:flex;align-items:center;justify-content:center;border-radius:12px;background:linear-gradient(145deg,#ffffff26,#ffffff0c);position:relative;cursor:pointer;user-select:none;transition:transform .12s,filter .12s;min-width:0;overflow:visible}
+.cell:active{transform:scale(.92)}
+.cell.selected{transform:scale(1.08);outline:3px solid #fff;z-index:2;filter:brightness(1.2)}
+.candy{font-size:clamp(23px,7.1vw,38px);line-height:1;filter:drop-shadow(0 3px 2px #23074470);animation:spawn .18s ease-out}
+@keyframes spawn{from{transform:scale(.45) rotate(-25deg);opacity:0}to{transform:scale(1);opacity:1}}
+.cell.pop{animation:pop .24s ease-in forwards}
+@keyframes pop{50%{transform:scale(1.4);filter:brightness(1.8)}100%{transform:scale(.1);opacity:0}}
+.cell.special:after{content:"✦";position:absolute;font-size:12px;right:2px;top:0;color:#fff;text-shadow:0 0 5px #fff}
+.footer{display:flex;justify-content:space-between;gap:8px;margin-top:12px}
+.action{flex:1;border:0;border-radius:15px;padding:11px 8px;font:600 15px Fredoka;color:#fff;background:linear-gradient(#ff83ce,#ef3eaa);box-shadow:0 5px 0 #a92c78,0 7px 13px #21073d66;cursor:pointer}
+.action.blue{background:linear-gradient(#70e4ff,#2ca6ef);box-shadow:0 5px 0 #1470b4,0 7px 13px #21073d66}
+.action.gold{background:linear-gradient(#ffe878,#ffad38);box-shadow:0 5px 0 #b76c1b,0 7px 13px #21073d66;color:#6a2c42}
+.action:active{transform:translateY(3px);box-shadow:0 2px 0 #8b2471}
+.hint{text-align:center;font-size:12px;opacity:.75;margin:10px 0}
+.toast{position:fixed;top:20%;left:50%;transform:translate(-50%,-15px);padding:12px 22px;background:#fff;color:#8027a4;border-radius:30px;font-weight:700;font-size:21px;box-shadow:0 6px 25px #22054a88;opacity:0;pointer-events:none;z-index:20;transition:.25s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.modal{position:fixed;inset:0;background:#16062bc9;display:none;align-items:center;justify-content:center;padding:20px;z-index:30}
+.modal.show{display:flex}
+.modalbox{max-width:340px;width:100%;text-align:center;padding:25px 20px;border:2px solid #fff8;border-radius:25px;background:linear-gradient(145deg,#ff8bd3,#9855ef 60%,#5c32b6);box-shadow:0 15px 50px #09001d}
+.modalbox h2{font-size:32px;margin:0 0 8px;text-shadow:0 3px #78328c}
+.modalbox p{font-size:17px;line-height:1.4}
+.modalbox .action{margin-top:8px;width:100%}
+.shake{animation:shake .28s}
+@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.particle{position:fixed;pointer-events:none;z-index:10;font-size:18px;animation:particle .6s ease-out forwards}
+@keyframes particle{to{transform:translate(var(--dx),var(--dy)) scale(.2) rotate(180deg);opacity:0}}
+@media(min-width:500px){.candy{font-size:39px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="logo">🍭 CANDY <span>BLAST</span><br><small style="font-size:13px;letter-spacing:3px">INFINITY</small></div><button class="iconbtn" id="soundBtn" title="Sound">🔊</button></div>
+  <div class="level-card">
+    <div class="stats">
+      <div class="stat"><small>Level</small><strong id="level">1</strong></div>
+      <div class="stat score"><small>Score</small><strong id="score">0</strong></div>
+      <div class="stat"><small>Moves</small><strong id="moves">25</strong></div>
+    </div>
+    <div class="goal"><span>🎯 Target</span><strong id="target">800</strong><span class="candymini">🍬</span><span id="goalText">Reach the score!</span></div>
+    <div class="progress"><i id="bar"></i></div>
+  </div>
+  <div class="board-shell"><div class="board" id="board"></div></div>
+  <div class="footer"><button class="action" id="shuffle">🔀 Shuffle</button><button class="action blue" id="hint">💡 Hint</button><button class="action gold" id="restart">↻ Restart</button></div>
+  <div class="hint">Swap candies • Match 3 or more • Make combos! ✨</div>
+</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="modalbox"><h2 id="modalTitle">Sweet!</h2><p id="modalMsg"></p><button class="action" id="modalBtn">Continue 🍬</button></div></div>
 <script>
 (()=>{
-const canvas=document.getElementById('screen'),ctx=canvas.getContext('2d');
-let W,H,lowScale=0.72;function resize(){W=innerWidth;H=innerHeight;canvas.width=Math.floor(W*lowScale);canvas.height=Math.floor(H*lowScale)}resize();addEventListener('resize',resize);
-const map=[
-"1111111111111111",
-"1000000000000001",
-"1000100000010001",
-"1000100000010001",
-"1000000000000001",
-"1010000110000101",
-"1000000000000001",
-"1000110001100001",
-"1000110001100001",
-"1000000000000001",
-"1010000000000101",
-"1000001001000001",
-"1000001001000001",
-"1000000000000001",
-"1000000000000001",
-"1111111111111111"
-].map(r=>r.split('').map(Number));
-const MAP=map.length, TILE=1, player={x:3.5,y:3.5,a:0,hp:100};
-const keys={f:false,b:false,l:false,r:false};let running=false,score=0,ammo=12,maxAmmo=12,wave=1,reloading=false,shootHeld=false,shootCooldown=0,damageFlash=0,gunKick=0;
-let enemies=[],particles=[];
-function wall(x,y){return map[Math.floor(y)]?.[Math.floor(x)]===1}
-function safeSpawn(){let x,y;do{x=1.5+Math.random()*13;y=1.5+Math.random()*13}while(wall(x,y)||Math.hypot(x-player.x,y-player.y)<5);return{x,y,hp:2,alive:true,attack:0,hit:0}}
-function spawnWave(){enemies=[];let count=3+wave*2;for(let i=0;i<count;i++)enemies.push(safeSpawn());document.getElementById('wave').textContent='WAVE '+wave}
-function reset(){player.x=3.5;player.y=3.5;player.a=0;player.hp=100;score=0;wave=1;ammo=maxAmmo;running=true;reloading=false;spawnWave();document.getElementById('overlay').style.display='none';updateHud()}
-function updateHud(){document.getElementById('health').textContent='❤️ '+Math.max(0,Math.ceil(player.hp));document.getElementById('ammo').textContent='🔫 '+ammo+' / '+maxAmmo;document.getElementById('score').textContent=score}
-document.getElementById('start').onclick=reset;document.getElementById('restart').onclick=()=>{document.getElementById('overlay').style.display='flex';document.querySelector('#card h1').textContent='⚔️ CITY STRIKE';document.querySelector('#card p').innerHTML='Ready for another round?';document.getElementById('start').textContent='RESTART';};
-function hold(id,key){let el=document.getElementById(id);function down(e){e.preventDefault();keys[key]=true;el.classList.add('down')}function up(){keys[key]=false;el.classList.remove('down')}el.addEventListener('pointerdown',down);['pointerup','pointercancel','pointerleave'].forEach(e=>el.addEventListener(e,up))}
-hold('forward','f');hold('back','b');hold('left','l');hold('right','r');
-addEventListener('keydown',e=>{if(e.key.toLowerCase()==='w'||e.key==='ArrowUp')keys.f=true;if(e.key.toLowerCase()==='s'||e.key==='ArrowDown')keys.b=true;if(e.key.toLowerCase()==='a'||e.key==='ArrowLeft')keys.l=true;if(e.key.toLowerCase()==='d'||e.key==='ArrowRight')keys.r=true;if(e.key===' '){e.preventDefault();shoot()}if(e.key.toLowerCase()==='r')reload()});
-addEventListener('keyup',e=>{if(e.key.toLowerCase()==='w'||e.key==='ArrowUp')keys.f=false;if(e.key.toLowerCase()==='s'||e.key==='ArrowDown')keys.b=false;if(e.key.toLowerCase()==='a'||e.key==='ArrowLeft')keys.l=false;if(e.key.toLowerCase()==='d'||e.key==='ArrowRight')keys.r=false});
-let
- touchX=null;canvas.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){touchX=e.clientX}});canvas.addEventListener('pointermove',e=>{if(touchX!==null&&e.pointerType==='touch'){let dx=e.clientX-touchX;player.a+=dx*.006;touchX=e.clientX}});canvas.addEventListener('pointerup',()=>touchX=null);canvas.addEventListener('pointercancel',()=>touchX=null);
-document.getElementById('shoot').addEventListener('pointerdown',e=>{e.preventDefault();shootHeld=true;shoot()});document.getElementById('shoot').addEventListener('pointerup',()=>shootHeld=false);document.getElementById('shoot').addEventListener('pointercancel',()=>shootHeld=false);document.getElementById('shoot').addEventListener('pointerleave',()=>shootHeld=false);
-document.getElementById('reload').onclick=reload;
-function reload(){if(!running||reloading||ammo===maxAmmo)return;reloading=true;document.getElementById('message').textContent='Reloading...';setTimeout(()=>{ammo=maxAmmo;reloading=false;document.getElementById('message').textContent='Enemies incoming!';updateHud()},900)}
-function shoot(){if(!running||reloading||shootCooldown>0)return;if(ammo<=0){reload();return}ammo--;shootCooldown=.22;gunKick=.12;updateHud();
- // target nearest enemy within aim cone
- let chosen=null,best=0.22;for(const en of enemies){if(!en.alive)continue;let dx=en.x-player.x,dy=en.y-player.y,dist=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)-player.a;ang=Math.atan2(Math.sin(ang),Math.cos(ang));let cone=Math.abs(ang);if(dist<10&&cone<best){best=cone;chosen=en}}
- if(chosen){chosen.hp--;chosen.hit=.16;particles.push({x:chosen.x,y:chosen.y,life:.2});if(chosen.hp<=0){chosen.alive=false;score+=100;updateHud()}}}
-function endGame(){running=false;document.getElementById('overlay').style.display='flex';document.querySelector('#card h1').textContent='GAME OVER';document.querySelector('#card p').innerHTML=`Score: <b>${score}</b><br>Reached wave ${wave}. Try again!`;document.getElementById('start').textContent='PLAY AGAIN'}
-const fov=Math.PI/3, rays=canvas.width;
-function rayCast(angle){let sin=Math.sin(angle),cos=Math.cos(angle);let d=0,step=.035;while(d<18){d+=step;let x=player.x+cos*d,y=player.y+sin*d;if(wall(x,y))return d}return 18}
+const N=8, TYPES=["🍓","🍋","🍇","🍊","🫐","🍏","🍬","🍒"];
+const boardEl=document.getElementById("board"),toastEl=document.getElementById("toast");
+let grid=[],level=1,score=0,moves=25,target=800,selected=null,busy=false,sound=true;
+let saved={};try{saved=JSON.parse(localStorage.getItem("candyInfinitySave")||"{}")}catch(e){}
+level=saved.level||1;score=saved.score||0;
+const rand=()=>Math.floor(Math.random()*TYPES.length);
+function targetFor(l){return Math.round(700+((l-1)*260)+Math.pow(l,1.25)*70)}
+function movesFor(l){return Math.max(18,26-Math.floor(l/4))}
+function save(){try{localStorage.setItem("candyInfinitySave",JSON.stringify({level,score,best:saved.best||0}))}catch(e){}}
+function tone(freq=500,dur=.07,type="sine",vol=.045){if(!sound)return;try{let c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=freq;g.gain.value=vol;g.gain.exponentialRampToValueAtTime(.001,c.currentTime+dur);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+dur);o.onended=()=>c.close()}catch(e){}}
 function render(){
- if(!W||!H)return;const cw=canvas.width,ch=canvas.height;
- // sky/ground gradient
- const sky=ctx.createLinearGradient(0,0,0,ch/2);sky.addColorStop(0,'#466d91');sky.addColorStop(1,'#c5d6dc');ctx.fillStyle=sky;ctx.fillRect(0,0,cw,ch/2);
- const ground=ctx.createLinearGradient(0,ch/2,0,ch);ground.addColorStop(0,'#575b58');ground.addColorStop(1,'#292c2c');ctx.fillStyle=ground;ctx.fillRect(0,ch/2,cw,ch/2);
- const depth=new Array(cw);
- for(let x=0;x<cw;x++){const angle=player.a+(x/cw-.5)*fov;let d=rayCast(angle);d*=Math.cos(angle-player.a);depth[x]=d;let h=Math.min(ch,d>0?ch/(d*.72):ch),top=ch/2-h/2;let shade=Math.max(.2,1-d/12);let col=Math.floor(105*shade);ctx.fillStyle=`rgb(${col+20},${col+25},${col+30})`;ctx.fillRect(x,top,1,h); // subtle wall bands
- if(h>15&&x%6===0){ctx.fillStyle=`rgba(18,20,24,${.1+(.3*(1-shade))})`;ctx.fillRect(x,top,1,h)}
- }
- // enemy billboard projections, sorted far to near
- const sorted=enemies.filter(e=>e.alive).map(e=>{let dx=e.x-player.x,dy=e.y-player.y,dist=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)-player.a;ang=Math.atan2(Math.sin(ang),Math.cos(ang));return{e,dist,ang}}).sort((a,b)=>b.dist-a.dist);
- for(const s of sorted){if(Math.abs(s.ang)>fov*.65||s.dist<.2)continue;let sx=(.5+s.ang/fov)*cw,scale=Math.min(ch*.45,ch/(s.dist*1.2)),base=ch/2+scale*.42;let pxw=scale*.45;
- // enemy simple pixel-styled soldier silhouette with head and body
- ctx.save();ctx.translate(sx,base);let isHit=s.e.hit>0;ctx.fillStyle=isHit?'#ffbd56':'#2c503e';ctx.fillRect(-pxw*.5,-scale*.45,pxw,scale*.58);
- ctx.fillStyle=isHit?'#fff2d0':'#405c4b';ctx.fillRect(-pxw*.7,-scale*.22,pxw*.25,scale*.55);ctx.fillRect(pxw*.45,-scale*.22,pxw*.25,scale*.55);
- ctx.fillStyle='#c28d69';ctx.beginPath();ctx.arc(0,-scale*.58,pxw*.35,0,Math.PI*2);ctx.fill();
- ctx.fillStyle='#172b24';ctx.fillRect(-pxw*.32,-scale*.65,pxw*.64,scale*.13);
- ctx.fillStyle='#111';ctx.fillRect(-pxw*.38,scale*.1,pxw*.3,scale*.35);ctx.fillRect(pxw*.08,scale*.1,pxw*.3,scale*.35);
- // enemy health tick
- ctx.fillStyle='#8c2222';ctx.fillRect(-pxw*.6,-scale*.83,pxw*1.2,4);ctx.fillStyle='#5ae17d';ctx.fillRect(-pxw*.6,-scale*.83,pxw*1.2*(s.e.hp/2),4);
- ctx.restore();
- }
- // weapon silhouette lower-center
- const gunY=ch*.89+gunKick*ch*.2;ctx.fillStyle='#121a20';ctx.beginPath();ctx.moveTo(cw*.42,ch);ctx.lineTo(cw*.45,gunY);ctx.lineTo(cw*.55,gunY);ctx.lineTo(cw*.59,ch);ctx.fill();ctx.fillStyle='#384a55';ctx.fillRect(cw*.47,gunY-8,cw*.06,14);
- // crosshair
- ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(cw/2-8,ch/2);ctx.lineTo(cw/2-3,ch/2);ctx.moveTo(cw/2+3,ch/2);ctx.lineTo(cw/2+8,ch/2);ctx.moveTo(cw/2,ch/2-8);ctx.lineTo(cw/2,ch/2-3);ctx.moveTo(cw/2,ch/2+3);ctx.lineTo(cw/2,ch/2+8);ctx.stroke();
- if(damageFlash>0){ctx.fillStyle=`rgba(220,20,20,${damageFlash})`;ctx.fillRect(0,0,cw,ch)}
+ boardEl.innerHTML="";
+ grid.forEach((v,i)=>{let b=document.createElement("button");b.className="cell"+(selected===i?" selected":"")+(v&&v.special?" special":"");b.setAttribute("aria-label",v?TYPES[v.t]:"empty");
+ if(v){let s=document.createElement("span");s.className="candy";s.textContent=TYPES[v.t];b.appendChild(s)}
+ b.addEventListener("click",()=>tap(i));boardEl.appendChild(b)});
+ document.getElementById("level").textContent=level;document.getElementById("score").textContent=score.toLocaleString();document.getElementById("moves").textContent=moves;
+ target=targetFor(level);document.getElementById("target").textContent=target.toLocaleString();
+ document.getElementById("bar").style.width=Math.min(100,score/target*100)+"%";
 }
-let last=performance.now();function loop(now){let dt=Math.min((now-last)/1000,.05);last=now;
- if(running){
-  shootCooldown=Math.max(0,shootCooldown-dt);gunKick=Math.max(0,gunKick-dt);damageFlash=Math.max(0,damageFlash-dt*2);
-  if(shootHeld&&shootCooldown<=0)shoot();
-  let move=(keys.f?1:0)-(keys.b?1:0),turn=(keys.r?1:0)-(keys.l?1:0);
-  player.a+=turn*2.3*dt;let speed=move*2.5*dt;let nx=player.x+Math.cos(player.a)*speed,ny=player.y+Math.sin(player.a)*speed;if(!wall(nx,player.y))player.x=nx;if(!wall(player.x,ny))player.y=ny;
-  for(const en of enemies){if(!en.alive)continue;en.hit=Math.max(0,en.hit-dt);let dx=player.x-en.x,dy=player.y-en.y,d=Math.hypot(dx,dy);if(d>1.25){let pace=(.35+wave*.04)*dt,nx=en.x+dx/d*pace,ny=en.y+dy/d*pace;if(!wall(nx,en.y))en.x=nx;if(!wall(en.x,ny))en.y=ny}else{en.attack-=dt;if(en.attack<=0){player.hp-=8;damageFlash=.22;en.attack=1.05;updateHud();if(player.hp<=0)endGame()}}}
-  if(enemies.every(e=>!e.alive)){wave++;ammo=maxAmmo;spawnWave();document.getElementById('message').textContent='Wave '+wave+'!';}
+function freshGrid(){grid=Array.from({length:N*N},()=>({t:rand()}));while(findMatches().size){findMatches().forEach(i=>grid[i]={t:rand()})}}
+function findMatches(){
+ let set=new Set();
+ for(let r=0;r<N;r++){let run=1;for(let c=1;c<N;c++){let a=grid[r*N+c],b=grid[r*N+c-1];if(a&&b&&a.t===b.t)run++;else{if(run>=3)for(let k=c-run;k<c;k++)set.add(r*N+k);run=1}}if(run>=3)for(let k=N-run;k<N;k++)set.add(r*N+k)}
+ for(let c=0;c<N;c++){let run=1;for(let r=1;r<N;r++){let a=grid[r*N+c],b=grid[(r-1)*N+c];if(a&&b&&a.t===b.t)run++;else{if(run>=3)for(let k=r-run;k<r;k++)set.add(k*N+c);run=1}}if(run>=3)for(let k=N-run;k<N;k++)set.add(k*N+c)}
+ return set
+}
+function neighbors(a,b){return Math.abs(a-b)===N||(Math.floor(a/N)===Math.floor(b/N)&&Math.abs(a-b)===1)}
+function tap(i){if(busy)return;if(selected===null){selected=i;render();tone(650,.035);return}
+ if(selected===i){selected=null;render();return}
+ if(!neighbors(selected,i)){selected=i;render();tone(420,.05);return}
+ swap(selected,i);selected=null}
+async function swap(a,b){
+ busy=true;[grid[a],grid[b]]=[grid[b],grid[a]];render();
+ await wait(120);
+ let matches=findMatches();
+ if(!matches.size){[grid[a],grid[b]]=[grid[b],grid[a]];render();busy=false;tone(220,.09,"triangle");return}
+ moves--;await clearCascade(matches,0);
+ render();busy=false;checkState();save()
+}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+async function clearCascade(matches,cascade){
+ while(matches.size){
+  const cells=[...matches];cells.forEach(i=>{let el=boardEl.children[i];if(el)el.classList.add("pop")});
+  let points=cells.length*60*(cascade+1);score+=points;
+  if(cascade>=1)showToast(["Sweet combo! ✨","Sugar rush! 💥","Amazing! 🌟"][Math.min(cascade-1,2)]);
+  tone(420+cascade*110,.11,"sine",.055);
+  cells.forEach(i=>particleAt(i));
+  await wait(220);
+  cells.forEach(i=>grid[i]=null);
+  // gravity column by column
+  for(let c=0;c<N;c++){let vals=[];for(let r=N-1;r>=0;r--){let v=grid[r*N+c];if(v)vals.push(v)}
+   for(let r=N-1;r>=0;r--)grid[r*N+c]=r>=N-vals.length?vals[N-1-r]:{t:rand()}}
+  render();await wait(130);
+  matches=findMatches();cascade++;
  }
- render();requestAnimationFrame(loop)}
-requestAnimationFrame(loop);
+}
+ function particleAt(i){let el=boardEl.children[i];if(!el)return;let rect=el.getBoundingClientRect();for(let k=0;k<4;k++){let p=document.createElement("span");p.className="particle";p.textContent=["✨","💖","⭐","🍬"][k];p.style.left=(rect.left+rect.width/2)+"px";p.style.top=(rect.top+rect.height/2)+"px";p.style.setProperty("--dx",(Math.random()*100-50)+"px");p.style.setProperty("--dy",(Math.random()*-100-20)+"px");document.body.appendChild(p);setTimeout(()=>p.remove(),650)}}
+let toastTimer;function showToast(txt){toastEl.textContent=txt;toastEl.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove("show"),1100)}
+function checkState(){if(score>=target){modal("🎉 Level Complete!",`You reached ${score.toLocaleString()} points! Level ${level} cleared.`,()=>{level++;score=Math.max(0,score-target);moves=movesFor(level);target=targetFor(level);freshGrid();render();save()})}else if(moves<=0){modal("💔 Out of moves!",`Score ${score.toLocaleString()} / ${target.toLocaleString()}. Try again!`,()=>{score=0;moves=movesFor(level);freshGrid();render();save()})}}
+function modal(title,msg,cb){document.getElementById("modalTitle").textContent=title;document.getElementById("modalMsg").textContent=msg;let m=document.getElementById("modal");m.classList.add("show");let btn=document.getElementById("modalBtn");btn.onclick=()=>{m.classList.remove("show");cb();tone(700,.13)}}
+function validMove(){for(let i=0;i<N*N;i++){let j=i+1;if(i%N<N-1&&neighbors(i,j)){[grid[i],grid[j]]=[grid[j],grid[i]];let ok=findMatches().size>0;[grid[i],grid[j]]=[grid[j],grid[i]];if(ok)return [i,j]}
+ j=i+N;if(j<N*N){[grid[i],grid[j]]=[grid[j],grid[i]];let ok=findMatches().size>0;[grid[i],grid[j]]=[grid[j],grid[i]];if(ok)return [i,j]}}
+ return null}
+document.getElementById("hint").onclick=()=>{if(busy)return;let m=validMove();if(m){selected=m[0];render();boardEl.children[m[1]].style.filter="brightness(1.6)";setTimeout(()=>{selected=null;render()},900);showToast("Try this move! 💡")}else showToast("Shuffle the board!")}
+document.getElementById("shuffle").onclick=()=>{if(busy)return;freshGrid();selected=null;render();showToast("Fresh candies! 🍭");tone(600,.1)}
+document.getElementById("restart").onclick=()=>modal("Restart level?","Your current score for this level will reset.",()=>{score=0;moves=movesFor(level);freshGrid();render();save()})
+document.getElementById("soundBtn").onclick=()=>{sound=!sound;document.getElementById("soundBtn").textContent=sound?"🔊":"🔇";if(sound)tone(700,.08)}
+moves=movesFor(level);freshGrid();render();
 })();
-</script></body></html>
+</script>
+</body></html>
