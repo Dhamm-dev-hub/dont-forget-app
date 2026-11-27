@@ -83,7 +83,7 @@ app.post("/api/vision", async (req, res) => {
           "Authorization": `Bearer ${API_KEY}`
         },
         body: JSON.stringify({
-          model: "gpt-6.1-terra",
+          model: process.env.OPENAI_MODEL || "gpt-6.1-terra",
           input: [
             {
               role: "user",
