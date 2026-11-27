@@ -7,6 +7,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json({ limit: "12mb" }));
 app.use(express.static(path.join(__dirname)));
+app.use((req, res, next) => {
+  console.log("REQUEST:", req.method, req.originalUrl);
+  next();
+});
 
 const API_KEY = process.env.OPENAI_API_KEY;
 
