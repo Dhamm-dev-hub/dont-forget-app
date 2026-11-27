@@ -3,50 +3,48 @@ const express = require("express");
 const path = require("path");
 
 const app = express();
-// CORS configuration for GitHub Pages
+const PORT = process.env.PORT || 8080;
+
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+
+// CORS
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization"
-  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
   if (req.method === "OPTIONS") {
     return res.sendStatus(204);
   }
-
   next();
 });
-const PORT = process.env.PORT || 3000;
 
 app.use(express.json({ limit: "12mb" }));
-app.use(express.static(path.join(__dirname)));
+
 app.use((req, res, next) => {
   console.log("REQUEST:", req.method, req.originalUrl);
   next();
 });
 
-const API_KEY = process.env.OPENAI_API_KEY;
+app.use(express.static(path.join(__dirname)));
 
 // Health check
 app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
     app: "Drishti AI",
-    aiConfigured: Boolean(API_KEY)
+    aiConfigured: Boolean(GEMINI_API_KEY),
+    provider: "Gemini"
   });
 });
 
-// AI Vision endpoint
+// Vision endpoint
 app.post("/api/vision", async (req, res) => {
   try {
-    if (!API_KEY) {
+    if (!GEMINI_API_KEY) {
       return res.status(500).json({
-        error: "OpenAI API key server par set nahi hai."
+        error: "GEMINI_API_KEY Railway par set nahi hai."
       });
     }
 
@@ -59,7 +57,7 @@ app.post("/api/vision", async (req, res) => {
     }
 
     const match = image.match(
-      /^data:image\/(jpeg|jpg|png|webp);base64,([A-Za-z0-9+/=]+)$/
+      /^data:(image\/(?:jpeg|jpg|png|webp));base64,([A-Za-z0-9+/=]+)$/
     );
 
     if (!match) {
@@ -70,14 +68,20 @@ app.post("/api/vision", async (req, res) => {
 
     if (image.length > 10 * 1024 * 1024) {
       return res.status(413).json({
-        error: "Image bahut badi hai."
+        error: "Image bahut badi hai. Chhoti photo try karein."
       });
     }
+
+    const mimeType = match[1] === "image/jpg"
+      ? "image/jpeg"
+      : match[1];
+
+    const base64Data = match[2];
 
     const lang = language === "en-IN" ? "English" : "Hindi";
 
     const prompts = {
-      scene: `You are Drishti AI, a visual assistant for blind and low-vision users. Describe the scene in natural ${lang}. Start with the most important information. Explain objects, their approximate positions (left, right, center, near, far), people, furniture, doors, visible paths and surroundings. Be helpful and detailed but easy to listen to. Only describe what is visible. Never claim a road, crossing, stairs or environment is safe.`,
+      scene: `You are Drishti AI, a visual assistant for blind and low-vision users. Describe the scene in natural ${lang}. Start with the most important information. Explain objects, approximate positions (left, right, center, near, far), people, furniture, doors, visible paths and surroundings. Be helpful and easy to listen to. Only describe what is visible. Never claim a road, crossing, stairs or environment is safe.`,
 
       outfit: `You are Drishti AI clothing assistant. In ${lang}, describe visible clothing, colours, garment types, patterns, layers, shoes, bags, watches and accessories. Only describe visible details. Do not guess identity, age, personality or sensitive traits.`,
 
@@ -97,31 +101,34 @@ app.post("/api/vision", async (req, res) => {
       : "";
 
     const response = await fetch(
-      "https://api.openai.com/v1/responses",
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${API_KEY}`
+          "x-goog-api-key": GEMINI_API_KEY
         },
         body: JSON.stringify({
-          model: process.env.OPENAI_MODEL || "gpt-6.1-terra",
-          input: [
+          contents: [
             {
               role: "user",
-              content: [
+              parts: [
                 {
-                  type: "input_text",
                   text: prompt + extraQuestion
                 },
                 {
-                  type: "input_image",
-                  image_url: image,
-                  detail: "high"
+                  inline_data: {
+                    mime_type: mimeType,
+                    data: base64Data
+                  }
                 }
               ]
             }
-          ]
+          ],
+          generationConfig: {
+            temperature: 0.3,
+            maxOutputTokens: 1200
+          }
         })
       }
     );
@@ -129,21 +136,25 @@ app.post("/api/vision", async (req, res) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("OpenAI API error:", data);
+      console.error("Gemini API error:", data);
+
       return res.status(response.status).json({
-        error: data?.error?.message || "AI request failed."
+        error: data?.error?.message || "Gemini API request failed."
       });
     }
 
-    const answer = data.output
-      ?.flatMap(item => item.content || [])
-      ?.filter(item => item.type === "output_text")
-      ?.map(item => item.text)
-      ?.join("\n") || "";
+    const answer = data.candidates
+      ?.flatMap(candidate => candidate.content?.parts || [])
+      ?.filter(part => typeof part.text === "string")
+      ?.map(part => part.text)
+      ?.join("\n")
+      .trim() || "";
 
     if (!answer) {
+      console.error("Gemini returned no text:", data);
+
       return res.status(502).json({
-        error: "AI se jawab nahi mila."
+        error: "Gemini se jawab nahi mila. Dobara try karein."
       });
     }
 
@@ -161,4 +172,4 @@ app.post("/api/vision", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Drishti AI running on port ${PORT}`);
 });
-            
+  
