@@ -1,132 +1,630 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#07131f">
-<title>Drishti AI — Visual Assistant</title>
+<title>Drishti AI - Visual Assistant</title>
+
 <style>
-:root{--bg:#07131f;--panel:#102232;--panel2:#142b3d;--text:#f3f8ff;--muted:#b7c9d8;--accent:#48d6c5;--accent2:#6ba9ff;--danger:#ff6969}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#07131f,#0b1e2d 70%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
-header{padding:22px 18px 12px;display:flex;align-items:center;gap:12px} .logo{width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#06202a;font-weight:900;font-size:22px}
-h1{margin:0;font-size:24px}header p{margin:2px 0;color:var(--muted);font-size:13px}
-main{max-width:760px;margin:auto;padding:10px 16px 40px}
-.status{border:1px solid #294459;background:#102232;border-radius:14px;padding:12px;margin:5px 0 14px;font-size:14px;color:var(--muted)}
-.camera-wrap{position:relative;background:#000;border-radius:20px;overflow:hidden;aspect-ratio:4/3;border:1px solid #264256}
-video{width:100%;height:100%;object-fit:cover;display:block} .cam-placeholder{position:absolute;inset:0;display:grid;place-items:center;color:#b9c8d5;text-align:center;padding:20px;background:radial-gradient(#1a3347,#07131f);font-size:17px}
-.camera-wrap.active .cam-placeholder{display:none}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
-button{border:0;border-radius:16px;padding:16px 14px;font:inherit;font-weight:750;color:#06131d;background:var(--accent);min-height:58px;cursor:pointer;touch-action:manipulation}
-button.secondary{background:var(--panel2);border:1px solid #35566e;color:var(--text)}
-button.blue{background:var(--accent2)}button.warn{background:#ffcc76}button:focus-visible{outline:3px solid white;outline-offset:3px}
-button:active{transform:scale(.985)}button:disabled{opacity:.55}
-.panel{background:var(--panel);border:1px solid #254256;border-radius:18px;padding:16px;margin:12px 0}
-.panel h2{font-size:18px;margin:0 0 10px}.desc{line-height:1.65;white-space:pre-wrap;color:#e6f2fb}
-.small{font-size:13px;color:var(--muted);line-height:1.5}
-.controls{display:flex;gap:8px;flex-wrap:wrap}.controls button{flex:1}
-input,select{background:#081724;color:white;border:1px solid #35566e;border-radius:12px;padding:12px;font-size:16px;width:100%}
-footer{padding:10px 0;color:var(--muted);font-size:12px;line-height:1.5}
-.sos{background:#7b2630;color:#fff}
-@media(min-width:620px){.actions{grid-template-columns:repeat(3,1fr)}}
+:root {
+  --bg:#07131f;
+  --panel:#102638;
+  --panel2:#183449;
+  --text:#f4f8ff;
+  --muted:#b9ccdc;
+  --accent:#48d6c5;
+  --blue:#69a9ff;
+  --danger:#ff6262;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:linear-gradient(160deg,#07131f,#102a3d);
+  color:var(--text);
+  font-family:system-ui,sans-serif;
+  min-height:100vh;
+}
+header {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:20px 16px;
+  max-width:760px;
+  margin:auto;
+}
+.logo {
+  width:52px;height:52px;
+  border-radius:16px;
+  background:linear-gradient(135deg,var(--accent),var(--blue));
+  color:#07131f;
+  display:grid;
+  place-items:center;
+  font-size:28px;
+  font-weight:900;
+}
+h1 {font-size:25px;margin:0}
+header p {margin:3px 0;color:var(--muted);font-size:13px}
+main {max-width:760px;margin:auto;padding:8px 15px 40px}
+.status {
+  padding:14px;
+  background:var(--panel);
+  border:1px solid #31516a;
+  border-radius:14px;
+  margin-bottom:14px;
+  line-height:1.5;
+}
+.camera {
+  position:relative;
+  background:#000;
+  border-radius:20px;
+  overflow:hidden;
+  aspect-ratio:4/3;
+  border:1px solid #35536a;
+}
+video {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.placeholder {
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  color:var(--muted);
+  font-size:18px;
+  background:radial-gradient(#1b394d,#07131f);
+}
+.camera.active .placeholder {display:none}
+.grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:14px 0;
+}
+button {
+  min-height:56px;
+  border:0;
+  border-radius:15px;
+  padding:13px 10px;
+  background:var(--accent);
+  color:#061a25;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+button.blue {background:var(--blue)}
+button.secondary {
+  background:var(--panel2);
+  color:white;
+  border:1px solid #36556c;
+}
+button.danger {background:#922f3d;color:white}
+button:disabled {opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible {
+  outline:3px solid white;
+  outline-offset:3px;
+}
+.panel {
+  background:var(--panel);
+  border:1px solid #29475e;
+  border-radius:18px;
+  padding:16px;
+  margin:13px 0;
+}
+h2 {font-size:18px;margin:0 0 12px}
+.answer {
+  line-height:1.75;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  min-height:45px;
+}
+.small {font-size:13px;color:var(--muted);line-height:1.6}
+.controls {
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.controls button {flex:1}
+input,select {
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #45647b;
+  background:#081b29;
+  color:white;
+  font-size:16px;
+  margin-top:7px;
+}
+label {display:block;margin-top:12px}
+footer {
+  font-size:12px;
+  line-height:1.7;
+  color:var(--muted);
+  padding:15px 2px;
+}
+@media(min-width:620px) {
+  .grid {grid-template-columns:repeat(3,1fr)}
+}
 </style>
 </head>
+
 <body>
+
 <header>
- <div class="logo" aria-hidden="true">D</div>
- <div><h1>Drishti AI</h1><p>आपका आवाज़ वाला visual assistant</p></div>
+  <div class="logo">D</div>
+  <div>
+    <h1>Drishti AI</h1>
+    <p>आपका AI Visual Assistant</p>
+  </div>
 </header>
+
 <main>
-<div id="status" class="status" role="status" aria-live="polite">Camera शुरू करने के लिए “Camera खोलें” दबाएँ या बोलें “Drishti camera kholo”.</div>
-<section class="camera-wrap" id="cameraWrap" aria-label="Camera preview">
- <video id="video" autoplay playsinline muted aria-label="Camera live view"></video>
- <div class="cam-placeholder" id="placeholder">📷<br><br>Camera अभी बंद है</div>
-</section>
-<div class="actions">
- <button id="startCamera" aria-label="Camera खोलें">📷 Camera खोलें</button>
- <button id="scan" class="blue" aria-label="दृश्य का विश्लेषण करें" disabled>✨ Scene बताओ</button>
- <button id="read" class="warn" aria-label="Text पढ़ें" disabled>📄 Text पढ़ें</button>
- <button id="listen" class="secondary" aria-label="Voice commands सुनना शुरू करें">🎙️ Voice command</button>
- <button id="switchCam" class="secondary" aria-label="Camera बदलें">🔄 Camera बदलें</button>
- <button id="stop" class="secondary" aria-label="Camera बंद करें">⏹️ Camera बंद</button>
+
+<div id="status" class="status" role="status" aria-live="polite">
+  Drishti AI तैयार है। Camera खोलें।
 </div>
-<section class="panel">
- <h2>🗣️ Drishti का जवाब</h2>
- <div id="answer" class="desc" aria-live="polite">आप कैमरा शुरू करके “Scene बताओ” दबाएँ। AI को जोड़ने के बाद यह दृश्य की विस्तृत जानकारी देगा।</div>
- <div class="controls" style="margin-top:12px">
-  <button id="speak" class="secondary">🔊 सुनें</button>
-  <button id="pause" class="secondary">⏸️ रोकें</button>
-  <button id="repeat" class="secondary">🔁 दोबारा</button>
- </div>
+
+<section class="camera" id="cameraWrap">
+  <video id="video" autoplay playsinline muted></video>
+  <div class="placeholder">
+    <div>📷<br><br>Camera अभी बंद है</div>
+  </div>
 </section>
+
+<div class="grid">
+  <button id="startCamera">📷 Camera खोलें</button>
+  <button id="scene" class="blue" disabled>✨ Scene बताओ</button>
+  <button id="ocr" disabled>📄 Text पढ़ो</button>
+  <button id="outfit" class="blue" disabled>👕 कपड़े बताओ</button>
+  <button id="detail" disabled>🔎 पूरी जानकारी</button>
+  <button id="switchCamera" class="secondary">🔄 Camera बदलें</button>
+  <button id="stopCamera" class="secondary">⏹ Camera बंद</button>
+</div>
+
 <section class="panel">
- <h2>🔎 क्या ढूँढना है?</h2>
- <label for="findText" class="small">Object खोज (उदाहरण: मेरा phone / keys / bottle)</label>
- <input id="findText" placeholder="जैसे: मेरा wallet ढूँढो" autocomplete="off">
- <button id="find" class="blue" style="width:100%;margin-top:10px" disabled>🔍 Camera में खोजें</button>
+  <h2>🗣️ Drishti AI का जवाब</h2>
+  <div id="answer" class="answer" aria-live="polite">
+    Camera खोलें और Scene बताओ दबाएँ।
+  </div>
+  <div class="controls">
+    <button id="speak" class="secondary">🔊 सुनें</button>
+    <button id="pause" class="secondary">⏸ रोकें</button>
+    <button id="repeat" class="secondary">🔁 दोबारा</button>
+  </div>
 </section>
+
 <section class="panel">
- <h2>⚙️ Voice settings</h2>
- <label class="small" for="language">जवाब की भाषा</label>
- <select id="language"><option value="hi-IN">हिंदी</option><option value="en-IN">English (India)</option></select>
- <p class="small">Voice speed</p><input id="rate" type="range" min="0.7" max="1.25" step="0.05" value="0.95" aria-label="Voice speed">
- <div class="controls" style="margin-top:12px"><button id="voiceOn" class="secondary">🔈 Auto voice: ON</button><button id="help" class="secondary">❓ मदद</button></div>
+  <h2>🔍 कोई वस्तु ढूँढें</h2>
+  <label for="findText" class="small">कौन-सी वस्तु खोजनी है?</label>
+  <input id="findText" placeholder="जैसे: मेरा फोन, चाबी, बोतल">
+  <button id="find" class="blue" style="width:100%;margin-top:12px" disabled>
+    🔍 वस्तु खोजें
+  </button>
 </section>
+
 <section class="panel">
- <h2>🆘 सहायता</h2>
- <p class="small">यह prototype सड़क पार करने, सीढ़ियों, traffic या किसी खतरे में सुरक्षित होने की पुष्टि नहीं कर सकता। चलने के लिए white cane, guide dog, mobility skills और ज़रूरत पर इंसानी सहायता का उपयोग करें।</p>
- <button class="sos" id="sos" style="width:100%">🆘 सहायता विकल्प</button>
+  <h2>💬 AI से सवाल पूछें</h2>
+  <label for="question" class="small">कैमरे में दिखाई दे रही चीज के बारे में पूछें</label>
+  <input id="question" placeholder="जैसे: मेरे सामने कौन-सी चीज है?">
+  <button id="ask" class="blue" style="width:100%;margin-top:12px" disabled>
+    💬 सवाल पूछें
+  </button>
 </section>
-<footer>Privacy: कैमरा केवल आपके द्वारा शुरू किए जाने पर चालू होगा। इस prototype में कैमरे की तस्वीरें किसी server पर नहीं भेजी जातीं। AI vision/OCR के लिए backend/API जोड़ना बाकी है।</footer>
+
+<section class="panel">
+  <h2>⚙️ Voice Settings</h2>
+
+  <label for="language" class="small">जवाब की भाषा</label>
+  <select id="language">
+    <option value="hi-IN">हिंदी</option>
+    <option value="en-IN">English</option>
+  </select>
+
+  <label for="rate" class="small">Voice Speed</label>
+  <input id="rate" type="range" min="0.7" max="1.3" step="0.05" value="0.95">
+
+  <div class="controls">
+    <button id="autoVoice" class="secondary">🔊 Auto Voice: ON</button>
+    <button id="voiceCommand" class="secondary">🎙 Voice Command</button>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>🆘 सुरक्षा</h2>
+  <p class="small">
+    Drishti AI की जानकारी गलत हो सकती है। इसे सड़क पार करने,
+    सीढ़ियों, ट्रैफिक या खतरे से बचने के लिए अकेले इस्तेमाल न करें।
+    White cane, guide dog और मानव सहायता का उपयोग करें।
+  </p>
+</section>
+
+<footer>
+  Privacy: Camera केवल आपकी अनुमति से चालू होगा।
+  तस्वीर AI विश्लेषण के लिए आपके secure backend को भेजी जाएगी।
+  API key इस HTML में नहीं रखी गई है।
+</footer>
+
 </main>
+
 <script>
-const $=id=>document.getElementById(id);
-let stream=null, facing='environment', autoVoice=true, lastText='', recognition=null, listening=false;
-function status(t){$('status').textContent=t}
-function say(text){lastText=text;$('answer').textContent=text;if(autoVoice) speakText(text)}
-function speakText(text){if(!('speechSynthesis' in window)){status('इस browser में voice सुविधा उपलब्ध नहीं है।');return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang=$('language').value;u.rate=Number($('rate').value);speechSynthesis.speak(u)}
-async function startCamera(){
- try{if(stream)stopCamera(false);stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:false});$('video').srcObject=stream;$('cameraWrap').classList.add('active');$('scan').disabled=false;$('read').disabled=false;$('find').disabled=false;status('Camera चालू है। Scene बताओ, Text पढ़ें या voice command बोलें.');}
- catch(e){status('Camera नहीं खुला: permission दें और HTTPS या localhost पर app खोलें.');say('Camera access नहीं मिल पाया। कृपया browser settings में camera permission दें।')}
+"use strict";
+
+// Same Railway server पर API request भेजें।
+const AI_ENDPOINT = "/api/vision";
+
+const $ = id => document.getElementById(id);
+
+let stream = null;
+let facing = "environment";
+let autoVoice = true;
+let lastAnswer = "";
+let recognition = null;
+let busy = false;
+
+function setStatus(message) {
+  $("status").textContent = message;
 }
-function stopCamera(update=true){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}$('video').srcObject=null;$('cameraWrap').classList.remove('active');$('scan').disabled=true;$('read').disabled=true;$('find').disabled=true;if(update)status('Camera बंद है।')}
-async function capture(){if(!stream)throw Error('पहले camera खोलें');let v=$('video'),c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);return c.toDataURL('image/jpeg',.85)}
-// Configure your own secure backend endpoint here. Do not put secret API keys in this HTML.
-const AI_ENDPOINT=''; // Example: https://your-server.example/api/vision
-async function analyze(mode,query=''){
- try{let img=await capture();status('Image analysis…');
-  if(!AI_ENDPOINT){say(mode==='read'?'Text पढ़ने के लिए OCR engine/backend जोड़ना होगा। अभी camera capture काम करता है, पर image से text extraction इस prototype में connected नहीं है.':'Camera से photo capture हो गया। AI vision backend अभी connect नहीं है, इसलिए वास्तविक scene/object description उपलब्ध नहीं है। अगला step secure AI backend जोड़ना है।');status('Capture सफल। AI backend connect करना बाकी है.');return}
-  const r=await fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:img,mode,query,language:$('language').value})});
-  if(!r.ok)throw Error('Server error');let data=await r.json();say(data.answer||'AI से जवाब नहीं मिला।');status('Analysis complete');
- }catch(e){status(e.message||'Scan error');say('Scan पूरा नहीं हो पाया। कृपया फिर कोशिश करें।')}
+
+function setAnswer(message) {
+  lastAnswer = message;
+  $("answer").textContent = message;
+
+  if (autoVoice) {
+    speakText(message);
+  }
 }
-$('startCamera').onclick=startCamera;$('stop').onclick=()=>stopCamera();$('scan').onclick=()=>analyze('scene');$('read').onclick=()=>analyze('ocr');$('find').onclick=()=>analyze('find',$('findText').value.trim());
-$('switchCam').onclick=()=>{facing=facing==='environment'?'user':'environment';if(stream)startCamera();else status('Camera बदला गया। Start camera दबाएँ.')};
-$('speak').onclick=()=>speakText($('answer').textContent);$('repeat').onclick=()=>speakText(lastText||$('answer').textContent);$('pause').onclick=()=>{if(speechSynthesis.speaking)speechSynthesis.cancel()};
-$('voiceOn').onclick=()=>{autoVoice=!autoVoice;$('voiceOn').textContent='🔈 Auto voice: '+(autoVoice?'ON':'OFF')};
-$('help').onclick=()=>say('आप Camera खोलें, Scene बताओ दबाएँ या Voice command शुरू करें। आप कह सकते हैं: मेरे सामने क्या है, text पढ़ो, मेरा phone ढूँढो, repeat करो, camera बंद करो।');
-$('sos').onclick=()=>say('अगर आपको तुरंत सहायता चाहिए, अपने trusted contact को फोन करें या स्थानीय emergency services से संपर्क करें। यह prototype emergency call नहीं करता।');
-function startVoice(){
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){say('Voice commands इस browser में समर्थित नहीं हैं।');return}
- if(listening){recognition.stop();return}
- recognition=new SR();recognition.lang=$('language').value;recognition.continuous=true;recognition.interimResults=false;listening=true;$('listen').textContent='🎙️ सुन रहा है… (रोकने के लिए दबाएँ)';
- recognition.onresult=e=>{let t=e.results[e.results.length-1][0].transcript.toLowerCase();status('आपने कहा: '+t);routeVoice(t)};
- recognition.onerror=()=>{listening=false;$('listen').textContent='🎙️ Voice command';status('Voice recognition error; फिर कोशिश करें')};
- recognition.onend=()=>{listening=false;$('listen').textContent='🎙️ Voice command'};
- recognition.start()
+
+function speakText(message) {
+  if (!("speechSynthesis" in window)) {
+    setStatus("इस browser में voice सुविधा उपलब्ध नहीं है।");
+    return;
+  }
+
+  speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(message);
+  utterance.lang = $("language").value;
+  utterance.rate = Number($("rate").value);
+
+  speechSynthesis.speak(utterance);
 }
-function routeVoice(t){
- if(t.includes('camera')&& (t.includes('खोल')||t.includes('start')||t.includes('open'))){startCamera();return}
- if(t.includes('बंद')||t.includes('stop camera')){stopCamera();speechSynthesis.cancel();return}
- if(t.includes('repeat')||t.includes('दोबारा')){speakText(lastText);return}
- if(t.includes('text पढ़')||t.includes('read text')||t.includes('पढ़कर')){analyze('ocr');return}
- if(t.includes('ढूंढ')||t.includes('find')||t.includes('खोज')){let q=t.replace(/ढूंढो|ढूँढो|ढूंढ|find|खोजो|खोज/g,'').trim();$('findText').value=q;analyze('find',q);return}
- if(t.includes('कपड़े')||t.includes('outfit')){analyze('outfit');return}
- if(t.includes('आसपास')||t.includes('सामने')||t.includes('scene')||t.includes('क्या है')){analyze('scene');return}
- say('मैंने सुना: '+t+'. कृपया camera assistant के उपलब्ध command में से बोलें।')
+
+function setButtons(enabled) {
+  ["scene","ocr","outfit","detail","find","ask"].forEach(id => {
+    $(id).disabled = !enabled || busy;
+  });
 }
-$('listen').onclick=startVoice;
-window.addEventListener('beforeunload',()=>stopCamera(false));
+
+async function startCamera() {
+  try {
+    stopCamera(false);
+
+    if (!navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia) {
+      throw new Error("Camera के लिए HTTPS browser जरूरी है।");
+    }
+
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: facing,
+        width: { ideal: 1280 },
+        height: { ideal: 960 }
+      },
+      audio: false
+    });
+
+    $("video").srcObject = stream;
+    await $("video").play();
+
+    $("cameraWrap").classList.add("active");
+    setButtons(true);
+
+    setStatus("Camera चालू है। अब कोई विकल्प चुनें।");
+
+  } catch (error) {
+    setStatus("Camera error: " + error.message);
+    setAnswer("Camera नहीं खुल पाया। कृपया camera permission दें।");
+  }
+}
+
+function stopCamera(update = true) {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+
+  $("video").srcObject = null;
+  $("cameraWrap").classList.remove("active");
+  setButtons(false);
+
+  if (update) {
+    setStatus("Camera बंद है।");
+  }
+}
+
+async function captureImage() {
+  if (!stream) {
+    throw new Error("पहले Camera खोलें।");
+  }
+
+  const video = $("video");
+
+  if (!video.videoWidth || !video.videoHeight) {
+    throw new Error("Camera तैयार नहीं है। एक बार फिर कोशिश करें।");
+  }
+
+  const canvas = document.createElement("canvas");
+
+  const maxWidth = 1280;
+  const scale = Math.min(1, maxWidth / video.videoWidth);
+
+  canvas.width = Math.round(video.videoWidth * scale);
+  canvas.height = Math.round(video.videoHeight * scale);
+
+  const context = canvas.getContext("2d");
+
+  if (!context) {
+    throw new Error("Image capture नहीं हो पाया।");
+  }
+
+  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  return canvas.toDataURL("image/jpeg", 0.78);
+}
+
+async function analyze(mode, query = "", question = "") {
+  if (busy) return;
+
+  busy = true;
+  setButtons(Boolean(stream));
+
+  try {
+    setStatus("📷 Photo capture हो रही है...");
+
+    const image = await captureImage();
+
+    setStatus("🤖 Drishti AI तस्वीर समझ रहा है। कृपया प्रतीक्षा करें।");
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 90000);
+
+    let response;
+
+    try {
+      response = await fetch(AI_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          image: image,
+          mode: mode,
+          query: query,
+          question: question,
+          language: $("language").value
+        }),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data.error || ("Server error: " + response.status));
+    }
+
+    if (!data.answer || !String(data.answer).trim()) {
+      throw new Error("AI से खाली जवाब मिला।");
+    }
+
+    setAnswer(data.answer);
+    setStatus("✅ AI analysis पूरा हो गया।");
+
+  } catch (error) {
+    let message = error.name === "AbortError"
+      ? "AI request में बहुत समय लग रहा है। फिर कोशिश करें।"
+      : error.message || "AI request असफल रही।";
+
+    setStatus("❌ " + message);
+    setAnswer("माफ कीजिए, अभी जवाब नहीं मिल पाया। " + message);
+
+  } finally {
+    busy = false;
+    setButtons(Boolean(stream));
+  }
+}
+
+// Main buttons
+$("startCamera").addEventListener("click", startCamera);
+$("stopCamera").addEventListener("click", () => stopCamera());
+
+$("scene").addEventListener("click", () => analyze("scene"));
+$("ocr").addEventListener("click", () => analyze("ocr"));
+$("outfit").addEventListener("click", () => analyze("outfit"));
+$("detail").addEventListener("click", () => analyze("detail"));
+
+$("find").addEventListener("click", () => {
+  const query = $("findText").value.trim();
+
+  if (!query) {
+    setStatus("पहले खोजने वाली वस्तु का नाम लिखें।");
+    $("findText").focus();
+    return;
+  }
+
+  analyze("find", query);
+});
+
+$("ask").addEventListener("click", () => {
+  const question = $("question").value.trim();
+
+  if (!question) {
+    setStatus("पहले अपना सवाल लिखें।");
+    $("question").focus();
+    return;
+  }
+
+  analyze("ask", "", question);
+});
+
+// Camera switch
+$("switchCamera").addEventListener("click", async () => {
+  facing = facing === "environment" ? "user" : "environment";
+
+  if (stream) {
+    await startCamera();
+  } else {
+    setStatus("Camera बदला गया। Camera खोलें दबाएँ।");
+  }
+});
+
+// Speech buttons
+$("speak").addEventListener("click", () => {
+  speakText($("answer").textContent);
+});
+
+$("repeat").addEventListener("click", () => {
+  speakText(lastAnswer || $("answer").textContent);
+});
+
+$("pause").addEventListener("click", () => {
+  if ("speechSynthesis" in window) {
+    speechSynthesis.cancel();
+  }
+});
+
+// Automatic voice
+$("autoVoice").addEventListener("click", () => {
+  autoVoice = !autoVoice;
+
+  $("autoVoice").textContent =
+    "🔊 Auto Voice: " + (autoVoice ? "ON" : "OFF");
+});
+
+// Voice commands
+function startVoiceCommand() {
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    setStatus("इस browser में Voice Commands supported नहीं हैं।");
+    return;
+  }
+
+  if (recognition) {
+    recognition.stop();
+    recognition = null;
+    $("voiceCommand").textContent = "🎙 Voice Command";
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.lang = $("language").value;
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  $("voiceCommand").textContent = "🎙 सुन रहा है...";
+
+  recognition.onresult = event => {
+    const command =
+      event.results[0][0].transcript.toLowerCase();
+
+    setStatus("आपने कहा: " + command);
+    handleVoiceCommand(command);
+  };
+
+  recognition.onerror = () => {
+    setStatus("Voice recognition error। फिर कोशिश करें।");
+  };
+
+  recognition.onend = () => {
+    recognition = null;
+    $("voiceCommand").textContent = "🎙 Voice Command";
+  };
+
+  recognition.start();
+}
+
+function handleVoiceCommand(command) {
+  if (command.includes("camera") &&
+      (command.includes("खोल") ||
+       command.includes("open") ||
+       command.includes("start"))) {
+    startCamera();
+    return;
+  }
+
+  if (command.includes("बंद") ||
+      command.includes("stop camera")) {
+    stopCamera();
+    return;
+  }
+
+  if (command.includes("text पढ़") ||
+      command.includes("read text") ||
+      command.includes("पढ़ो")) {
+    analyze("ocr");
+    return;
+  }
+
+  if (command.includes("कपड़े") ||
+      command.includes("outfit")) {
+    analyze("outfit");
+    return;
+  }
+
+  if (command.includes("ढूंढ") ||
+      command.includes("ढूँढ") ||
+      command.includes("find") ||
+      command.includes("खोज")) {
+    let query = command
+      .replace(/ढूंढो|ढूँढो|ढूंढ|ढूँढ|find|खोजो|खोज/g, "")
+      .trim();
+
+    $("findText").value = query || "फोन";
+    analyze("find", $("findText").value);
+    return;
+  }
+
+  if (command.includes("सामने") ||
+      command.includes("आसपास") ||
+      command.includes("scene") ||
+      command.includes("क्या है")) {
+    analyze("scene");
+    return;
+  }
+
+  if (command.includes("दोबारा") ||
+      command.includes("repeat")) {
+    speakText(lastAnswer);
+    return;
+  }
+
+  setAnswer("मैंने सुना: " + command +
+    "। कृपया Scene बताओ, Text पढ़ो या वस्तु खोजो बोलें।");
+}
+
+$("voiceCommand").addEventListener("click", startVoiceCommand);
+
+// Clean camera when leaving page
+window.addEventListener("pagehide", () => {
+  stopCamera(false);
+
+  if ("speechSynthesis" in window) {
+    speechSynthesis.cancel();
+  }
+});
 </script>
+
 </body>
    </html>
+ 
