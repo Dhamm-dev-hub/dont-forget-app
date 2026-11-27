@@ -1,3 +1,3 @@
-# dont-forget-app
-Daily checklist and reminder app
-and best graphics 
+# Dristi Ai
+for blind people helping Ai 
+for surviving life 
